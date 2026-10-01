@@ -319,14 +319,21 @@ groupSelectButton.addEventListener("click", async () => {
     return;
   }
 
-  currentGroup = groupNumber;
-  names = [];
-  await loadMembers(currentGroup);
+currentGroup = groupNumber;
+
+document.querySelector(".sub").textContent =
+  `Blessing Bible Friends · ${currentGroup}조`;
+
+document.querySelector(".summary-title").textContent =
+  `${currentGroup}조 통독 현황`;
+
+names = [];
 render();
-  
-  document.querySelector(".sub").textContent = `Blessing Bible Friends · ${currentGroup}조`;
-document.querySelector(".summary-title").textContent = `${currentGroup}조 통독 현황`;
-  alert(`${currentGroup}조가 선택되었습니다.`);
+
+await loadMembers(currentGroup);
+render();
+
+alert(`${currentGroup}조가 선택되었습니다.`);
 });
     const missedDays = {
 
