@@ -291,7 +291,7 @@ let currentGroup = 16;
     ];
 const groupSelectButton = document.getElementById("groupSelectButton");
 
-groupSelectButton.addEventListener("click", () => {
+groupSelectButton.addEventListener("click", async () => {
   const choice = prompt("이동할 조 번호를 입력하세요. (1~92)", currentGroup);
 
   if (choice === null) return;
@@ -304,6 +304,8 @@ groupSelectButton.addEventListener("click", () => {
   }
 
   currentGroup = groupNumber;
+  await loadMembers(currentGroup);
+render();
   document.querySelector(".sub").textContent = `Blessing Bible Friends · ${currentGroup}조`;
 document.querySelector(".summary-title").textContent = `${currentGroup}조 통독 현황`;
   alert(`${currentGroup}조가 선택되었습니다.`);
