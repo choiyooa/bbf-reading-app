@@ -1,103 +1,425 @@
 <!DOCTYPE html>
+
 <html lang="ko">
+
 <head>
+
   <meta charset="UTF-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>BBF 성경통독</title>
+
   <style>
+
+    * {
+
+      box-sizing: border-box;
+
+    }
+
     body {
+
       margin: 0;
+
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
       background: #f7f8f5;
+
       color: #222;
+
     }
 
     .wrap {
-      max-width: 700px;
+
+      max-width: 760px;
+
       margin: 0 auto;
-      padding: 24px 18px 60px;
+
+      padding: 24px 16px 80px;
+
     }
 
     h1 {
-      margin-bottom: 6px;
+
+      margin: 0 0 6px;
+
       font-size: 30px;
+
     }
 
     .sub {
-      color: #6f746f;
-      margin-bottom: 28px;
+
+      color: #727872;
+
+      margin-bottom: 24px;
+
     }
 
-    .card {
-      background: white;
+    .summary {
+
+      background: #ffffff;
+
       border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 16px;
+
+      padding: 18px;
+
+      margin-bottom: 18px;
+
       box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+
     }
 
-    .group-title {
+    .summary-title {
+
       font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 14px;
+
+      font-weight: 800;
+
+      margin-bottom: 10px;
+
+    }
+
+    .summary-text {
+
+      color: #5d655f;
+
+      line-height: 1.6;
+
     }
 
     .person {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 13px 0;
-      border-bottom: 1px solid #eee;
+
+      background: #fff;
+
+      border-radius: 16px;
+
+      padding: 16px;
+
+      margin-bottom: 12px;
+
+      box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+
+      cursor: pointer;
+
     }
 
-    .person:last-child {
-      border-bottom: none;
+    .person-top {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      gap: 12px;
+
+    }
+
+    .name {
+
+      font-size: 18px;
+
+      font-weight: 700;
+
     }
 
     .rate {
-      font-weight: 700;
+
+      font-size: 17px;
+
+      font-weight: 800;
+
       color: #4f7d61;
+
     }
 
-    button {
-      width: 100%;
-      margin-top: 18px;
-      padding: 15px;
-      border: none;
-      border-radius: 14px;
-      background: #4f7d61;
-      color: white;
-      font-size: 17px;
-      font-weight: 700;
+    .detail {
+
+      display: none;
+
+      margin-top: 16px;
+
+      padding-top: 14px;
+
+      border-top: 1px solid #eee;
+
     }
+
+    .detail.open {
+
+      display: block;
+
+    }
+
+    .days {
+
+      display: grid;
+
+      grid-template-columns: repeat(5, 1fr);
+
+      gap: 8px;
+
+    }
+
+    .day {
+
+      border: none;
+
+      border-radius: 10px;
+
+      padding: 10px 4px;
+
+      font-size: 14px;
+
+      font-weight: 700;
+
+      background: #ecefec;
+
+      color: #555;
+
+    }
+
+    .day.done {
+
+      background: #5f8a6e;
+
+      color: white;
+
+    }
+
+    .day.missed {
+
+      background: #f3d6d1;
+
+      color: #9c4c42;
+
+    }
+
+    .hint {
+
+      margin-top: 12px;
+
+      font-size: 13px;
+
+      color: #808680;
+
+    }
+
   </style>
+
 </head>
 
 <body>
+
   <div class="wrap">
+
     <h1>BBF 성경통독</h1>
-    <div class="sub">Blessing Bible Friends</div>
 
-    <div class="card">
-      <div class="group-title">16조</div>
+    <div class="sub">Blessing Bible Friends · 16조</div>
 
-      <div class="person">
-        <span>김리화</span>
-        <span class="rate">98%</span>
+    <div class="summary">
+
+      <div class="summary-title">16조 통독 현황</div>
+
+      <div class="summary-text">
+
+        92일차까지 기존 기록을 반영했습니다.<br>
+
+        이름을 누르면 개인별 1~150일 기록을 볼 수 있습니다.
+
       </div>
 
-      <div class="person">
-        <span>조원 2</span>
-        <span class="rate">95%</span>
-      </div>
-
-      <div class="person">
-        <span>조원 3</span>
-        <span class="rate">91%</span>
-      </div>
-
-      <button>통독 기록 보기</button>
     </div>
+
+    <div id="people"></div>
+
   </div>
+
+  <script>
+
+    const names = [
+
+      "최유아",
+
+      "추아이비",
+
+      "고영웅",
+
+      "김리화",
+
+      "김보혜",
+
+      "김성미",
+
+      "김찬희",
+
+      "양철준",
+
+      "오경아",
+
+      "이미진",
+
+      "이찬미",
+
+      "임수빈",
+
+      "장서윤",
+
+      "전서영",
+
+      "전선주",
+
+      "최리야",
+
+      "최유란",
+
+      "홍주연"
+
+    ];
+
+    const missedDays = {
+
+      "고영웅": [84, 85, 86, 87, 88, 89, 90],
+
+      "장서윤": [88, 91]
+
+    };
+
+    const CURRENT_DAY = 92;
+
+    const TOTAL_DAYS = 150;
+
+    function getCompletedCount(name) {
+
+      const missed = missedDays[name] || [];
+
+      return CURRENT_DAY - missed.length;
+
+    }
+
+    function getRate(name) {
+
+      const completed = getCompletedCount(name);
+
+      return ((completed / CURRENT_DAY) * 100).toFixed(1);
+
+    }
+
+    function makeDays(name) {
+
+      let html = "";
+
+      const missed = missedDays[name] || [];
+
+      for (let day = 1; day <= TOTAL_DAYS; day++) {
+
+        let className = "day";
+
+        let mark = "";
+
+        if (day <= CURRENT_DAY) {
+
+          if (missed.includes(day)) {
+
+            className += " missed";
+
+            mark = "✕";
+
+          } else {
+
+            className += " done";
+
+            mark = "✓";
+
+          }
+
+        }
+
+        html += `
+
+          <button class="${className}">
+
+            ${day}<br>${mark}
+
+          </button>
+
+        `;
+
+      }
+
+      return html;
+
+    }
+
+    function render() {
+
+      const people = document.getElementById("people");
+
+      names.forEach((name) => {
+
+        const completed = getCompletedCount(name);
+
+        const rate = getRate(name);
+
+        const card = document.createElement("div");
+
+        card.className = "person";
+
+        card.innerHTML = `
+
+          <div class="person-top">
+
+            <div class="name">${name}</div>
+
+            <div class="rate">${rate}%</div>
+
+          </div>
+
+          <div class="detail">
+
+            <div style="margin-bottom:12px; font-weight:700;">
+
+              ${completed} / ${CURRENT_DAY}일 완독
+
+            </div>
+
+            <div class="days">
+
+              ${makeDays(name)}
+
+            </div>
+
+            <div class="hint">
+
+              현재는 기존 92일차 기록을 표시하는 시험 화면입니다.
+
+            </div>
+
+          </div>
+
+        `;
+
+        card.addEventListener("click", function(e) {
+
+          if (e.target.classList.contains("day")) return;
+
+          const detail = card.querySelector(".detail");
+
+          detail.classList.toggle("open");
+
+        });
+
+        people.appendChild(card);
+
+      });
+
+    }
+
+    render();
+
+  </script>
+
 </body>
+
 </html>
