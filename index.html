@@ -250,7 +250,7 @@
   <script>
 const groups = Array.from({ length: 92 }, (_, i) => i + 1);
 let currentGroup = 16;
-    const names = [
+    let names = [
 
       "최유아",
 
@@ -289,6 +289,22 @@ let currentGroup = 16;
       "홍주연"
 
     ];
+    async function loadMembers(groupNo) {
+  const { data, error } = await sb
+    .from("members")
+    .select("name")
+    .eq("group_no", groupNo)
+    .eq("active", true)
+    .order("id");
+
+  if (error) {
+    alert("조원 명단을 불러오지 못했습니다.");
+    console.error(error);
+    return;
+  }
+
+  names = data.map(member => member.name);
+}
 const groupSelectButton = document.getElementById("groupSelectButton");
 
 groupSelectButton.addEventListener("click", async () => {
@@ -304,6 +320,8 @@ groupSelectButton.addEventListener("click", async () => {
   }
 
   currentGroup = groupNumber;
+  await loadMembers(currentGroup);
+render();
   await loadMembers(currentGroup);
 render();
   document.querySelector(".sub").textContent = `Blessing Bible Friends · ${currentGroup}조`;
