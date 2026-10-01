@@ -320,10 +320,10 @@ groupSelectButton.addEventListener("click", async () => {
   }
 
   currentGroup = groupNumber;
+  names = [];
   await loadMembers(currentGroup);
 render();
-  await loadMembers(currentGroup);
-render();
+  
   document.querySelector(".sub").textContent = `Blessing Bible Friends · ${currentGroup}조`;
 document.querySelector(".summary-title").textContent = `${currentGroup}조 통독 현황`;
   alert(`${currentGroup}조가 선택되었습니다.`);
