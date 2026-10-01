@@ -217,6 +217,7 @@
     <h1>BBF 성경통독</h1>
 
     <div class="sub">Blessing Bible Friends · 16조</div>
+    <button id="groupSelectButton">조 선택</button>
 
     <div class="summary">
 
@@ -237,7 +238,8 @@
   </div>
 
   <script>
-
+const groups = Array.from({ length: 92 }, (_, i) => i + 1);
+let currentGroup = 16;
     const names = [
 
       "최유아",
@@ -277,7 +279,23 @@
       "홍주연"
 
     ];
+const groupSelectButton = document.getElementById("groupSelectButton");
 
+groupSelectButton.addEventListener("click", () => {
+  const choice = prompt("이동할 조 번호를 입력하세요. (1~92)", currentGroup);
+
+  if (choice === null) return;
+
+  const groupNumber = Number(choice);
+
+  if (groupNumber < 1 || groupNumber > 92 || !Number.isInteger(groupNumber)) {
+    alert("1부터 92 사이의 조 번호를 입력해주세요.");
+    return;
+  }
+
+  currentGroup = groupNumber;
+  alert(`${currentGroup}조가 선택되었습니다.`);
+});
     const missedDays = {
 
       "고영웅": [84, 85, 86, 87, 88, 89, 90],
