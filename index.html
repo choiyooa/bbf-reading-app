@@ -338,7 +338,7 @@
 
         html += `
 
-          <button class="${className}">
+          <button class="${className}" data-name="${name}" data-day="${day}">
 
             ${day}<br>${mark}
 
@@ -400,15 +400,48 @@
 
         `;
 
-        card.addEventListener("click", function(e) {
+      card.addEventListener("click", async function(e) {
 
-          if (e.target.classList.contains("day")) return;
+  if (e.target.classList.contains("day")) {
 
-          const detail = card.querySelector(".detail");
+    const button = e.target;
+    const day = Number(button.dataset.day);
 
-          detail.classList.toggle("open");
+    if (day > CURRENT_DAY) return;
 
-        });
+    const isCompleted = button.classList.contains("done");
+    const newCompleted = !isCompleted;
+
+    const { error } = await sb
+      .from("reading_checks")
+      .upsert(
+        {
+          name: name,
+          day: day,
+          completed: newCompleted
+        },
+        {
+          onConflict: "name,day"
+        }
+      );
+
+    if (error) {
+      alert("저장에 실패했습니다.");
+      console.error(error);
+      return;
+    }
+
+    button.classList.toggle("done", newCompleted);
+    button.classList.toggle("missed", !newCompleted);
+    button.innerHTML = `${day}<br>${newCompleted ? "✓" : "×"}`;
+
+    return;
+  }
+
+  const detail = card.querySelector(".detail");
+  detail.classList.toggle("open");
+
+});
 
         people.appendChild(card);
 
@@ -416,7 +449,7 @@
 
     }
 
-    render();
+  
 
   </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -426,6 +459,36 @@
   const SUPABASE_KEY = "sb_publishable_Z4rcU9R1-K1i3IaxkSbgjA_zf4Yr0Vv";
 
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+async function loadSavedChecks() {
+  const { data, error } = await sb
+    .from("reading_checks")
+    .select("name, day, completed");
+
+  if (error) {
+    console.error(error);
+    render();
+    return;
+  }
+
+  data.forEach((row) => {
+    if (!missedDays[row.name]) {
+      missedDays[row.name] = [];
+    }
+
+    if (row.completed) {
+      missedDays[row.name] =
+        missedDays[row.name].filter((d) => d !== row.day);
+    } else {
+      if (!missedDays[row.name].includes(row.day)) {
+        missedDays[row.name].push(row.day);
+      }
+    }
+  });
+
+  render();
+}
+
+loadSavedChecks();
 </script>
 </body>
 
