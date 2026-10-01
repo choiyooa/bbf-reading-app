@@ -228,7 +228,7 @@
 
     <div class="sub">Blessing Bible Friends · 16조</div>
     <button id="groupSelectButton">조 선택</button>
-
+<button id="addMemberButton">+ 조원 추가</button>
     <div class="summary">
 
       <div class="summary-title">16조 통독 현황</div>
@@ -334,6 +334,39 @@ await loadMembers(currentGroup);
 render();
 
 alert(`${currentGroup}조가 선택되었습니다.`);
+});
+    const addMemberButton = document.getElementById("addMemberButton");
+
+addMemberButton.addEventListener("click", async () => {
+  const newName = prompt(`${currentGroup}조에 추가할 조원 이름을 입력하세요.`);
+
+  if (newName === null) return;
+
+  const trimmedName = newName.trim();
+
+  if (!trimmedName) {
+    alert("이름을 입력해주세요.");
+    return;
+  }
+
+  const { error } = await sb
+    .from("members")
+    .insert({
+      group_no: currentGroup,
+      name: trimmedName,
+      active: true
+    });
+
+  if (error) {
+    alert("조원 추가에 실패했습니다.");
+    console.error(error);
+    return;
+  }
+
+  await loadMembers(currentGroup);
+  render();
+
+  alert(`${trimmedName}님이 ${currentGroup}조에 추가되었습니다.`);
 });
     const missedDays = {
 
