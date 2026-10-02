@@ -552,7 +552,7 @@ people.innerHTML = "";
 async function loadSavedChecks() {
   const { data, error } = await sb
     .from("reading_checks")
-    .select("name, day, completed");
+    .select("group_no, name, day, completed");
 
   if (error) {
     console.error(error);
